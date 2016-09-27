@@ -62,6 +62,10 @@ void next_avail_char() {
 	}
 }
 
+void back() {
+	fseek(fp, -1, 1); //将文件指针从当前位置向前移动一个字节
+}
+
 //读进常数并将常数从字符串翻译到数字
 void recognize_number() {
 	int N = 0;
@@ -78,7 +82,7 @@ void recognize_number() {
 	P->next = Tmp;
 	Tmp->last = P;
 	P = Tmp;
-	//back();
+	back();
 }
 
 //读进标识符
@@ -143,13 +147,13 @@ void recognize_name() {
 		P = Tmp;
 		Tmp->next = NULL;
 	}
-	//back();
+	back();
 }
 
 //仅读一个单词的词法分析器
 void next_token(void) {
+
 	next_avail_char();
-	printf("1\n");
 	switch (ch) {
 	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': recognize_number(); break;
 
@@ -228,7 +232,8 @@ void next_token(void) {
 		Tmp->next = NULL;
 		break;
 	}
-	case '\0': {
+	case  -1: {
+		printf("EOF");
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
 		Tmp->class = EOF;
@@ -239,26 +244,13 @@ void next_token(void) {
 		Tmp->next = NULL;
 		break;
 	}
-	case EOF: printf("eof"); break;
 	default: break;
 	}
 }
 
 
 int main() {
-	Token T;
-	T = init_token();
-	fp = fopen("C:\\1.txt", "r");
-
-	do {
-		next_token();
-	} while (ch != EOF);
-
-	P = T->next;
-	while (P != NULL) {
-		printf("%d,%s\n", P->class, P->seman);
-		P = P->next;
-	}
+	
 
 	return 0;
 }
