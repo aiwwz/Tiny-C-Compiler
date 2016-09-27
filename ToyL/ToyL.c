@@ -28,6 +28,8 @@
 #define is_operator(ch) ((ch)=='+' || (ch)=='-' || (ch)=='*')
 #define is_layout(ch) (!is_end_of_input(ch) && (ch)<=' ')  //格式符
 
+#define Error(STR) printf("%s",STR), exit(1)
+
 typedef struct Token_Node * PtrToNode;
 typedef PtrToNode Token;
 typedef PtrToNode Position;
@@ -42,6 +44,7 @@ struct Token_Node {
 char ch;  //定义全局字符变量
 FILE *fp;  //定义全局文件指针变量
 Position P;  //定义全局token指针
+Position P_old; //用于语法分析过程中的单词回溯
 
 Token init_token() {
 	Token T;
@@ -190,7 +193,7 @@ void next_token(void) {
 	}
 	case ':': {
 		next_Char(); 
-		if (ch != '=') break;
+		if (ch != '=') Error("Error: invalid identifier!\n");
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
 		Tmp->class = ASS;
@@ -249,21 +252,60 @@ void next_token(void) {
 	}
 }
 
+//语法分析器部分
+void token(int class) {
+	if (P->class != class) {
+		printf("%d,%d\n", P->class, class);
+		Error("Syntax Error1!\n");
+	}
+	P = P->next;
+}
+
+void expr_parser() {
+loop:	if (P->class != IDEN && P->class != NUMB) {
+			Error("Syntax Error2!\n");
+		}
+		P = P->next;
+		if (P->class == PLUS || P->class == MULT) {
+			P = P->next;
+			goto loop;
+		}
+		return;
+}
+
+void prog_parser() {
+	token(BEGIN);
+	while (P->class != END) {
+		switch (P->class) {
+		case READ: P = P->next; token(OPEN); token(IDEN); token(CLOSE); token(SEMI); break;
+		case WRITE: P = P->next; token(OPEN); expr_parser(); token(CLOSE); token(SEMI); break;
+		case IDEN: P = P->next; token(ASS); expr_parser(); token(SEMI); break;
+		default: Error("Syntax Error3!\n"); break;
+		}
+	}
+	P = P->next;
+	token(EOF);
+
+	return;
+}
+
 
 int main() {
 	Token T;
 	T = init_token();
 	fp = fopen("C:\\1.txt", "r");
 
+	//词法分析
 	while(P->class != EOF){
 		next_token();
 	}
 
+	//指针复原
 	P = T->next;
-	while (P != NULL) {
-		printf("%d,%s\n", P->class, P->seman);
-		P = P->next;
-	}
+
+	//语法分析
+	prog_parser();
+	
 	fclose(fp);
 
 	return 0;
