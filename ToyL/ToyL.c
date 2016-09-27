@@ -3,22 +3,23 @@
 #include <string.h>
 
 //Token--单词的编码
-#define BEGIN 1
-#define NUMB 2
-#define IDEN 3
-#define PLUS 4
-#define MULT 5
-#define ASS 6 //定义‘:=’赋值的宏名
-#define READ 7
-#define WRITE 8
-#define SEMI 9
-#define OPEN 10
-#define CLOSE 11
-#define END 12
+//已经内置定义 EOF (-1)
+#define BEGIN 0
+#define NUMB 1
+#define IDEN 2
+#define PLUS 3
+#define MULT 4
+#define ASS 5 //定义‘:=’赋值的宏名
+#define READ 6
+#define WRITE 7
+#define SEMI 8
+#define OPEN 9
+#define CLOSE 10
+#define END 11
 
 
 //判断读入的字符的类型
-#define is_end_of_input(ch) ((ch)== '\0')
+#define is_end_of_input(ch) ((ch)== -1)
 #define is_lc_letter(ch) ('a'<=(ch) && (ch)<='Z')
 #define is_uc_letter(ch) ('A'<=(ch) && (ch)<='Z')
 #define is_letter(ch) ('a'<=(ch) && (ch)<='z' || 'A'<=(ch) && (ch)<='Z')
@@ -115,6 +116,7 @@ void recognize_name() {
 		Tmp->last = P;
 		P = Tmp;
 		Tmp->next = NULL;
+		return; //end保留字不能使用back()函数，应当直接返回；
 	}
 	else if (strcmp(name, "read") == 0) {
 		Position Tmp;
@@ -232,8 +234,7 @@ void next_token(void) {
 		Tmp->next = NULL;
 		break;
 	}
-	case  -1: {
-		printf("EOF");
+	case  EOF: {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
 		Tmp->class = EOF;
@@ -250,7 +251,20 @@ void next_token(void) {
 
 
 int main() {
-	
+	Token T;
+	T = init_token();
+	fp = fopen("C:\\1.txt", "r");
+
+	while(P->class != EOF){
+		next_token();
+	}
+
+	P = T->next;
+	while (P != NULL) {
+		printf("%d,%s\n", P->class, P->seman);
+		P = P->next;
+	}
+	fclose(fp);
 
 	return 0;
 }
