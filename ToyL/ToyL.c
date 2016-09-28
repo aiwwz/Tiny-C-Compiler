@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "stack.h"
 
 //Token--单词的编码
 //已经内置定义 EOF (-1)
@@ -289,6 +290,53 @@ void prog_parser() {
 	return;
 }
 
+//代码解释模块
+//创建存储空间存储变量
+struct {
+	char *iden_name;
+	int val;
+}Memory[100];
+int mp; //表示Memory中变量的个数
+
+//根据变量名从Memory中求得对应val;
+int fetch(char *name) {
+	int i = 0;
+	while (strcmp(Memory[i].iden_name, name) != 0 && i < mp) {
+		++i;
+	}
+	if (i == mp)
+		Error("Variable does not exist.!\n");
+	else
+		return Memory[i].val;
+}
+//从控制台读入变量
+int read() {
+	int tmp;
+	scanf("%d", &tmp);
+	return tmp;
+}
+//将变量存入Memory中
+void updata(char * name, int a) {
+	Memory[mp].iden_name = name;
+	Memory[mp].val = a;
+}
+//表达式求值
+int expr_val() {
+
+}
+
+void interpreter() {
+	token(BEGIN);
+	while (P->class != END) {
+		switch (P->class) {
+		case READ: P = P->next; token(OPEN); updata(P->seman, read()); token(CLOSE); token(SEMI); break;
+		case WRITE: P = P->next; token(OPEN); expr求值->print; token(CLOSE); token(SEMI); break;
+		case IDEN: P = P->next; token(ASS); expr求值->x->表中; token(SEMI); break;
+		default: Error("Syntax Error!\n");
+		} 
+	}
+}
+
 
 int main() {
 	Token T;
@@ -299,13 +347,14 @@ int main() {
 	while(P->class != EOF){
 		next_token();
 	}
-
-	//指针复原
 	P = T->next;
-
 	//语法分析
 	prog_parser();
+	P = T->next;
+	//代码解释
+
 	
+
 	fclose(fp);
 
 	return 0;
