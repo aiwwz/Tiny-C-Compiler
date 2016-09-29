@@ -316,10 +316,15 @@ int read() {
 	return tmp;
 }
 //将变量存入Memory中
-void updata(char * name, int a) {
-	Memory[mp].iden_name = name;
-	Memory[mp].val = a;
-}
+void updata(char * id[], int n) {
+	i = 0;
+	while (!strcmp(Memory[i].name, id) && i <= mp) ++i;
+	if (i <= mp)
+		Memory[i].val = n;
+	else {
+		Memory[i].name = id;
+		Memory[mp].val = n;
+	}
 //表达式求值
 int expr_val() {
 

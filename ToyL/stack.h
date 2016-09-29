@@ -18,9 +18,7 @@ struct StackRecord {
 	int Capacity;
 	ElementType *Array;
 };
-void ClearStack(Stack S) {
-	S->TopOfStack = EmptyOfStack;
-}
+
 Stack InitStack(int MaxStackSize) {
 	Stack S;
 	if (MaxStackSize < MinStackSize)
