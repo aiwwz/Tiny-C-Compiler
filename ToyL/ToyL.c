@@ -330,6 +330,11 @@ int expr_val() {
 
 }
 
+//ÊäÈëÊä³ö
+void in_out() {
+
+}
+
 void interpreter() {
 	token(BEGIN);
 	while (P->class != END) {
