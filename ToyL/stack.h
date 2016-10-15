@@ -1,6 +1,5 @@
-#pragma once
-#ifndef STACK_H;
-#define STACK_H;
+#ifndef STACK_H
+#define STACK_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +17,9 @@ struct StackRecord {
 	int Capacity;
 	ElementType *Array;
 };
+void ClearStack(Stack S) {
+	S->TopOfStack = EmptyOfStack;
+}
 
 Stack InitStack(int MaxStackSize) {
 	Stack S;

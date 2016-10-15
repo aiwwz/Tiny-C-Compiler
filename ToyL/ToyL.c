@@ -29,7 +29,6 @@
 #define is_operator(ch) ((ch)=='+' || (ch)=='-' || (ch)=='*')
 #define is_layout(ch) (!is_end_of_input(ch) && (ch)<=' ')  //格式符
 
-#define Error(STR) printf("%s",STR), exit(1)
 
 typedef struct Token_Node * PtrToNode;
 typedef PtrToNode Token;
@@ -257,14 +256,14 @@ void next_token(void) {
 void token(int class) {
 	if (P->class != class) {
 		printf("%d,%d\n", P->class, class);
-		Error("Syntax Error1!\n");
+		Error("Syntax Error!\n");
 	}
 	P = P->next;
 }
 
 void expr_parser() {
 loop:	if (P->class != IDEN && P->class != NUMB) {
-			Error("Syntax Error2!\n");
+			Error("Syntax Error!\n");
 		}
 		P = P->next;
 		if (P->class == PLUS || P->class == MULT) {
@@ -281,7 +280,7 @@ void prog_parser() {
 		case READ: P = P->next; token(OPEN); token(IDEN); token(CLOSE); token(SEMI); break;
 		case WRITE: P = P->next; token(OPEN); expr_parser(); token(CLOSE); token(SEMI); break;
 		case IDEN: P = P->next; token(ASS); expr_parser(); token(SEMI); break;
-		default: Error("Syntax Error3!\n"); break;
+		default: Error("Syntax Error!\n"); break;
 		}
 	}
 	P = P->next;
@@ -315,6 +314,7 @@ int read() {
 	scanf("%d", &tmp);
 	return tmp;
 }
+/*
 //将变量存入Memory中
 void updata(char * id[], int n) {
 	i = 0;
@@ -346,7 +346,7 @@ void interpreter() {
 		} 
 	}
 }
-
+*/
 
 int main() {
 	Token T;
@@ -361,6 +361,7 @@ int main() {
 	//语法分析
 	prog_parser();
 	P = T->next;
+
 	//代码解释
 
 	
