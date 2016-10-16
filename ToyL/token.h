@@ -20,6 +20,18 @@ typedef PtrToNode Position;
 #define CLOSE 10
 #define END 11
 
+//判断读入的字符的类型
+#define is_end_of_input(ch) ((ch)== -1)
+#define is_lc_letter(ch) ('a'<=(ch) && (ch)<='Z')
+#define is_uc_letter(ch) ('A'<=(ch) && (ch)<='Z')
+#define is_letter(ch) ('a'<=(ch) && (ch)<='z' || 'A'<=(ch) && (ch)<='Z')
+#define is_digit(ch) ('0'<=(ch) && (ch)<='9')
+#define is_letter_or_digit(ch) (is_letter(ch) && is_digit(ch))
+#define is_operator(ch) ((ch)=='+' || (ch)=='-' || (ch)=='*')
+#define is_layout(ch) (!is_end_of_input(ch) && (ch)<=' ')  //格式符
+
+
+
 struct Token_Node
 {
 	int _class;

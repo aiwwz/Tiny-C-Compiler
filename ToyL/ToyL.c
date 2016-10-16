@@ -4,44 +4,6 @@
 #include "stack.h"
 #include "expr_val.h"
 
-//Token--单词的编码
-//已经内置定义 EOF (-1)
-#define BEGIN 0
-#define NUMB 1
-#define IDEN 2
-#define PLUS 3
-#define MULT 4
-#define ASS 5 //定义‘:=’赋值的宏名
-#define READ 6
-#define WRITE 7
-#define SEMI 8
-#define OPEN 9
-#define CLOSE 10
-#define END 11
-
-
-//判断读入的字符的类型
-#define is_end_of_input(ch) ((ch)== -1)
-#define is_lc_letter(ch) ('a'<=(ch) && (ch)<='Z')
-#define is_uc_letter(ch) ('A'<=(ch) && (ch)<='Z')
-#define is_letter(ch) ('a'<=(ch) && (ch)<='z' || 'A'<=(ch) && (ch)<='Z')
-#define is_digit(ch) ('0'<=(ch) && (ch)<='9')
-#define is_letter_or_digit(ch) (is_letter(ch) && is_digit(ch))
-#define is_operator(ch) ((ch)=='+' || (ch)=='-' || (ch)=='*')
-#define is_layout(ch) (!is_end_of_input(ch) && (ch)<=' ')  //格式符
-
-
-typedef struct Token_Node * PtrToNode;
-typedef PtrToNode Token;
-typedef PtrToNode Position;
-/*
-struct Token_Node {
-int _class;  //单词编码
-char * seman;   //语义
-Position  last;
-Position  next;
-};
-*/
 char ch;  //定义全局字符变量
 FILE *fp;  //定义全局文件指针变量
 Position P;  //定义全局token指针

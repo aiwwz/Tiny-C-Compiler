@@ -1,0 +1,6 @@
+begin 
+read(x);
+read(y);
+x:=x+y;
+write(x);
+end
