@@ -51,39 +51,39 @@ int	 expr_val(Position P) {
 	S_sym = InitStack(100);
 	S_num = InitStack(100);
 	int Result;
-	for ( ; P->_class != SEMI; P = P->next) {
+	for (; P->_class != SEMI; P = P->next) {
 		if (P->_class == NUMB) {  //A[i] is number
 			Push(S_num, (int)P->seman[0]);
 		}
-		else 
+		else
 			if (P->_class == IDEN) {
 				Push(S_num, fetch(P->seman));
 			}
 
-		else 
-			if (P->_class == PLUS || P->_class == MULT || P->_class == OPEN) {  //A[i] is operator
-				if (!IsEmpty(S_sym)) {
-					if (Priority(P->seman[0], (char)Top(S_sym)) > 0)
-						Push(S_sym, (int)P->seman[0]);
-					else if (Priority(P->seman[0], (char)Top(S_sym)) < 0) {
-						while (!IsEmpty(S_sym) && Priority(P->seman[0], (char)Top(S_sym)) < 0)
-							Operation(S_sym, S_num);
-						Push(S_sym, (int)P->seman[0]);
+			else
+				if (P->_class == PLUS || P->_class == MULT || P->_class == OPEN) {  //A[i] is operator
+					if (!IsEmpty(S_sym)) {
+						if (Priority(P->seman[0], (char)Top(S_sym)) > 0)
+							Push(S_sym, (int)P->seman[0]);
+						else if (Priority(P->seman[0], (char)Top(S_sym)) < 0) {
+							while (!IsEmpty(S_sym) && Priority(P->seman[0], (char)Top(S_sym)) < 0)
+								Operation(S_sym, S_num);
+							Push(S_sym, (int)P->seman[0]);
+						}
 					}
+					else
+						Push(S_sym, (int)P->seman[0]);
 				}
-				else 
-					Push(S_sym, (int)P->seman[0]);
-			}
-		else 
-			if (P->_class == CLOSE) {
-				while (Priority(P->seman[0], Top(S_sym)) != 0)
-					Operation(S_sym, S_num);
-				Pop(S_sym);
-			}
-		else {
-			PrintError("Input Error!!!");
-			return 0;
-		}
+				else
+					if (P->_class == CLOSE) {
+						while (Priority(P->seman[0], Top(S_sym)) != 0)
+							Operation(S_sym, S_num);
+						Pop(S_sym);
+					}
+					else {
+						PrintError("Input Error!!!");
+						return 0;
+					}
 	}
 
 	while (!IsEmpty(S_sym))

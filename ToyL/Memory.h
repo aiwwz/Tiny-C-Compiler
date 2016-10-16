@@ -12,7 +12,7 @@ struct {
 }Memory[100];
 int mp = 0; //表示Memory中变量的个数
 
-		//根据变量名从Memory中求得对应val;
+			//根据变量名从Memory中求得对应val;
 int fetch(char *name) {
 	int i = 0;
 	while (strcmp(Memory[i].iden_name, name) != 0 && i < mp) {
@@ -20,7 +20,7 @@ int fetch(char *name) {
 	}
 	if (i == mp) {
 		Error("Variable does not exist.!\n");
-		
+
 	}
 	else
 		return Memory[i].val;
@@ -36,7 +36,7 @@ int read() {
 void updata(char * id, int n) {
 	int i = 0;
 	while (i < mp && strcmp(Memory[i].iden_name, id))
-		++i; 
+		++i;
 	if (i < mp)
 		Memory[i].val = n;
 	else {

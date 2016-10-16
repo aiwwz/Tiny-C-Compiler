@@ -36,10 +36,10 @@ typedef PtrToNode Token;
 typedef PtrToNode Position;
 /*
 struct Token_Node {
-	int _class;  //单词编码
-	char * seman;   //语义
-	Position  last;
-	Position  next;
+int _class;  //单词编码
+char * seman;   //语义
+Position  last;
+Position  next;
 };
 */
 char ch;  //定义全局字符变量
@@ -178,7 +178,7 @@ void next_token(void) {
 		P->next = Tmp;
 		Tmp->last = P;
 		P = Tmp;
-		Tmp->next = NULL; 
+		Tmp->next = NULL;
 		break;
 	}
 	case '*': {
@@ -193,7 +193,7 @@ void next_token(void) {
 		break;
 	}
 	case ':': {
-		next_Char(); 
+		next_Char();
 		if (ch != '=') Error("Error: invalid identifier!\n");
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
@@ -263,8 +263,8 @@ void token(int _class) {
 
 void expr_parser() {
 loop:	if (P->_class != IDEN && P->_class != NUMB) {
-			Error("Syntax Error!\n");
-		}
+	Error("Syntax Error!\n");
+}
 		P = P->next;
 		if (P->_class == PLUS || P->_class == MULT) {
 			P = P->next;
@@ -306,36 +306,36 @@ void interpreter() {
 	Position Tmp;
 	while (P->_class != END) {
 		switch (P->_class) {
-		case READ: 
+		case READ:
 			P = P->next;
-			token(OPEN); 
-			updata(P->seman, read()); 
-			P = P->next; 
-			token(CLOSE); 
-			token(SEMI); 
+			token(OPEN);
+			updata(P->seman, read());
+			P = P->next;
+			token(CLOSE);
+			token(SEMI);
 			break;
-		case WRITE: 
+		case WRITE:
 			P = P->next;
-			token(OPEN);  
-			printf("%d\n", fetch(P->seman)); 
+			token(OPEN);
+			printf("%d\n", fetch(P->seman));
 			P = P->next;
-			token(CLOSE); 
-			token(SEMI); 
+			token(CLOSE);
+			token(SEMI);
 			break;
 		case IDEN:
-			Tmp = P; 
-			P = P->next; 
-			token(ASS); 
-			updata(Tmp->seman, expr_val(P)); 
+			Tmp = P;
+			P = P->next;
+			token(ASS);
+			updata(Tmp->seman, expr_val(P));
 			P = P->next;
 			if (mp == 2) {
 				P = P->next;
 				P = P->next;
 			}
-			token(SEMI); 
+			token(SEMI);
 			break;
 		default: Error("Syntax Error444!\n");
-		} 
+		}
 	}
 }
 
@@ -345,10 +345,10 @@ int main() {
 	char c[100];
 	printf("Input directory of file:");
 	gets(c);
-	fp = fopen(c, "r");	
-	
+	fp = fopen(c, "r");
+
 	//词法分析
-	while(P->_class != EOF){
+	while (P->_class != EOF) {
 		next_token();
 	}
 	P = T->next;
