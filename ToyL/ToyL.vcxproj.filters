@@ -35,5 +35,11 @@
     <ClInclude Include="parse.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="expr_val.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

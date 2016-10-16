@@ -9,7 +9,7 @@
 #define Error(STR) FatalError(STR)
 #define PrintError(STR) printf("%s\n", STR)
 
-typedef double ElementType;
+typedef int ElementType;
 typedef struct StackRecord * Stack;
 
 struct StackRecord {
@@ -61,7 +61,7 @@ void Pop(Stack S) {
 }
 ElementType TopAndPop(Stack S) {
 	if (!IsEmpty(S))
-		return S->Array[--S->TopOfStack];
+		return S->Array[S->TopOfStack--];
 	else
 		Error("Empty stack!!!");
 	return 0;

@@ -5,6 +5,21 @@ typedef struct Token_Node * PtrToNode;
 typedef PtrToNode Token;
 typedef PtrToNode Position;
 
+//Token--单词的编码
+//已经内置定义 EOF (-1)
+#define BEGIN 0
+#define NUMB 1
+#define IDEN 2
+#define PLUS 3
+#define MULT 4
+#define ASS 5 //定义‘:=’赋值的宏名
+#define READ 6
+#define WRITE 7
+#define SEMI 8
+#define OPEN 9
+#define CLOSE 10
+#define END 11
+
 struct Token_Node
 {
 	int _class;

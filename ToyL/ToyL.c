@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "stack.h"
+#include "expr_val.h"
 
 //Token--单词的编码
 //已经内置定义 EOF (-1)
@@ -33,14 +34,14 @@
 typedef struct Token_Node * PtrToNode;
 typedef PtrToNode Token;
 typedef PtrToNode Position;
-
+/*
 struct Token_Node {
-	int class;  //单词编码
+	int _class;  //单词编码
 	char * seman;   //语义
 	Position  last;
 	Position  next;
 };
-
+*/
 char ch;  //定义全局字符变量
 FILE *fp;  //定义全局文件指针变量
 Position P;  //定义全局token指针
@@ -79,7 +80,7 @@ void recognize_number() {
 	}
 	Position Tmp;
 	Tmp = malloc(sizeof(struct Token_Node));
-	Tmp->class = NUMB;
+	Tmp->_class = NUMB;
 	Tmp->seman = malloc(sizeof(char) + 1);
 	Tmp->seman[0] = N;  //将翻译后的数字直接存入字符数组中，字符数组的第一个元素即为ASCII码为N对应的字符
 	Tmp->seman[1] = '\0';
@@ -103,7 +104,7 @@ void recognize_name() {
 	if (strcmp(name, "begin") == 0) {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = BEGIN;
+		Tmp->_class = BEGIN;
 		Tmp->seman = "begin";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -113,7 +114,7 @@ void recognize_name() {
 	else if (strcmp(name, "end") == 0) {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = END;
+		Tmp->_class = END;
 		Tmp->seman = "end";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -124,7 +125,7 @@ void recognize_name() {
 	else if (strcmp(name, "read") == 0) {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = READ;
+		Tmp->_class = READ;
 		Tmp->seman = "read";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -134,7 +135,7 @@ void recognize_name() {
 	else if (strcmp(name, "write") == 0) {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = WRITE;
+		Tmp->_class = WRITE;
 		Tmp->seman = "write";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -144,7 +145,7 @@ void recognize_name() {
 	else {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = IDEN;
+		Tmp->_class = IDEN;
 		Tmp->seman = malloc(sizeof(char) * strlen(name));
 		strcpy(Tmp->seman, name);
 		P->next = Tmp;
@@ -172,7 +173,7 @@ void next_token(void) {
 	case '+': {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = PLUS;
+		Tmp->_class = PLUS;
 		Tmp->seman = "+";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -183,7 +184,7 @@ void next_token(void) {
 	case '*': {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = MULT;
+		Tmp->_class = MULT;
 		Tmp->seman = "*";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -196,7 +197,7 @@ void next_token(void) {
 		if (ch != '=') Error("Error: invalid identifier!\n");
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = ASS;
+		Tmp->_class = ASS;
 		Tmp->seman = ":=";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -207,7 +208,7 @@ void next_token(void) {
 	case ';': {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = SEMI;
+		Tmp->_class = SEMI;
 		Tmp->seman = ";";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -218,7 +219,7 @@ void next_token(void) {
 	case '(': {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = OPEN;
+		Tmp->_class = OPEN;
 		Tmp->seman = "(";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -229,7 +230,7 @@ void next_token(void) {
 	case ')': {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = CLOSE;
+		Tmp->_class = CLOSE;
 		Tmp->seman = ")";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -240,7 +241,7 @@ void next_token(void) {
 	case  EOF: {
 		Position Tmp;
 		Tmp = malloc(sizeof(struct Token_Node));
-		Tmp->class = EOF;
+		Tmp->_class = EOF;
 		Tmp->seman = "eof";
 		P->next = Tmp;
 		Tmp->last = P;
@@ -253,20 +254,19 @@ void next_token(void) {
 }
 
 //语法分析器部分
-void token(int class) {
-	if (P->class != class) {
-		printf("%d,%d\n", P->class, class);
+void token(int _class) {
+	if (P->_class != _class) {
 		Error("Syntax Error!\n");
 	}
 	P = P->next;
 }
 
 void expr_parser() {
-loop:	if (P->class != IDEN && P->class != NUMB) {
+loop:	if (P->_class != IDEN && P->_class != NUMB) {
 			Error("Syntax Error!\n");
 		}
 		P = P->next;
-		if (P->class == PLUS || P->class == MULT) {
+		if (P->_class == PLUS || P->_class == MULT) {
 			P = P->next;
 			goto loop;
 		}
@@ -275,8 +275,8 @@ loop:	if (P->class != IDEN && P->class != NUMB) {
 
 void prog_parser() {
 	token(BEGIN);
-	while (P->class != END) {
-		switch (P->class) {
+	while (P->_class != END) {
+		switch (P->_class) {
 		case READ: P = P->next; token(OPEN); token(IDEN); token(CLOSE); token(SEMI); break;
 		case WRITE: P = P->next; token(OPEN); expr_parser(); token(CLOSE); token(SEMI); break;
 		case IDEN: P = P->next; token(ASS); expr_parser(); token(SEMI); break;
@@ -290,83 +290,76 @@ void prog_parser() {
 }
 
 //代码解释模块
-//创建存储空间存储变量
-struct {
-	char *iden_name;
-	int val;
-}Memory[100];
-int mp; //表示Memory中变量的个数
 
-//根据变量名从Memory中求得对应val;
-int fetch(char *name) {
-	int i = 0;
-	while (strcmp(Memory[i].iden_name, name) != 0 && i < mp) {
-		++i;
-	}
-	if (i == mp)
-		Error("Variable does not exist.!\n");
-	else
-		return Memory[i].val;
-}
-//从控制台读入变量
-int read() {
-	int tmp;
-	scanf("%d", &tmp);
-	return tmp;
-}
-/*
-//将变量存入Memory中
-void updata(char * id[], int n) {
-	i = 0;
-	while (!strcmp(Memory[i].name, id) && i <= mp) ++i;
-	if (i <= mp)
-		Memory[i].val = n;
-	else {
-		Memory[i].name = id;
-		Memory[mp].val = n;
-	}
 //表达式求值
-int expr_val() {
 
-}
 
+/*
 //输入输出
 void in_out() {
 
 }
+*/
 
 void interpreter() {
 	token(BEGIN);
-	while (P->class != END) {
-		switch (P->class) {
-		case READ: P = P->next; token(OPEN); updata(P->seman, read()); token(CLOSE); token(SEMI); break;
-		case WRITE: P = P->next; token(OPEN); expr求值->print; token(CLOSE); token(SEMI); break;
-		case IDEN: P = P->next; token(ASS); expr求值->x->表中; token(SEMI); break;
-		default: Error("Syntax Error!\n");
+	Position Tmp;
+	while (P->_class != END) {
+		switch (P->_class) {
+		case READ: 
+			P = P->next;
+			token(OPEN); 
+			updata(P->seman, read()); 
+			P = P->next; 
+			token(CLOSE); 
+			token(SEMI); 
+			break;
+		case WRITE: 
+			P = P->next;
+			token(OPEN);  
+			printf("%d\n", fetch(P->seman)); 
+			P = P->next;
+			token(CLOSE); 
+			token(SEMI); 
+			break;
+		case IDEN:
+			Tmp = P; 
+			P = P->next; 
+			token(ASS); 
+			updata(Tmp->seman, expr_val(P)); 
+			P = P->next;
+			if (mp == 2) {
+				P = P->next;
+				P = P->next;
+			}
+			token(SEMI); 
+			break;
+		default: Error("Syntax Error444!\n");
 		} 
 	}
 }
-*/
 
 int main() {
 	Token T;
 	T = init_token();
-	fp = fopen("C:\\1.txt", "r");
-
+	char c[100];
+	printf("Input directory of file:");
+	gets(c);
+	fp = fopen(c, "r");	
+	
 	//词法分析
-	while(P->class != EOF){
+	while(P->_class != EOF){
 		next_token();
 	}
 	P = T->next;
+
 	//语法分析
 	prog_parser();
-	P = T->next;
 
 	//代码解释
-
-	
+	P = T->next;
+	interpreter();
 
 	fclose(fp);
-
 	return 0;
 }

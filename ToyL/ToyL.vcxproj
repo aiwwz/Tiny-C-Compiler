@@ -151,6 +151,8 @@
     <ClCompile Include="ToyL.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="expr_val.h" />
+    <ClInclude Include="Memory.h" />
     <ClInclude Include="parse.h" />
     <ClInclude Include="stack.h" />
     <ClInclude Include="token.h" />
