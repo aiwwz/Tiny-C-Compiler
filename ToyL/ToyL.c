@@ -302,7 +302,7 @@ void interpreter() {
 }
 
 int main() {
-	/*Token T;
+	Token T;
 	T = init_token();
 	char c[100];
 	printf("Input directory of file:");
@@ -323,7 +323,7 @@ int main() {
 	interpreter();
 
 	fclose(fp);
-	*/
+	
 
 	int _ = 1;
 	printf("%d", _);
