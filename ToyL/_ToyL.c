@@ -302,7 +302,7 @@ void interpreter() {
 }
 
 int main() {
-	Token T;
+	/*Token T;
 	T = init_token();
 	char c[100];
 	printf("Input directory of file:");
@@ -327,5 +327,13 @@ int main() {
 
 	int _ = 1;
 	printf("%d", _);
+	*/
+	#define D 3
+	enum A {
+		A, B, C
+	};
+	printf("%d", D);
+	int a;
+
 	return 0;
 }

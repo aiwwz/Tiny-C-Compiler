@@ -15,22 +15,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ToyL.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    <ClInclude Include="_Memory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_expr_val.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_stack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="_token.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pcc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stack.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="token.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="expr_val.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <ClCompile Include="_ToyL.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="lex.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pcc.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamic.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

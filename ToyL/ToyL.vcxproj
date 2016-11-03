@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ToyL</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Piggy</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -146,13 +147,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ToyL.c" />
+    <ClCompile Include="dynamic.c" />
+    <ClCompile Include="lex.c" />
+    <ClCompile Include="pcc.c" />
+    <ClCompile Include="_ToyL.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="expr_val.h" />
-    <ClInclude Include="Memory.h" />
-    <ClInclude Include="stack.h" />
-    <ClInclude Include="token.h" />
+    <ClInclude Include="pcc.h" />
+    <ClInclude Include="_expr_val.h" />
+    <ClInclude Include="_Memory.h" />
+    <ClInclude Include="_stack.h" />
+    <ClInclude Include="_token.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
