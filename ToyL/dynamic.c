@@ -46,9 +46,9 @@ Token VectorAdd(Vector Vec, HashTable H, String Str) {
 		if (Tk->String == NULL) {
 			Error("Out of space!");
 		}
-		strcpy(Tk->String, Str);
-		Tk->Next = H->TheTokens[hash(Str)];
-		H->TheTokens[hash(Str)] = Tk;
+		strcpy(Tk->String, Str->Data);
+		Tk->Next = H->TheTokens[Hash(Str->Data, H)];
+		H->TheTokens[Hash(Str, H)] = Tk;
 
 		Vec->Data[Vec->Size++] = Tk;
 	}
@@ -142,7 +142,7 @@ HashTable InitHash(int TableSize) {
 /*¹þÏ£±í²éÕÒ*/
 Position Find(String Str, HashTable H) {
 	Position Pos;
-	Pos = H->TheTokens[Hash(Str, H)];
+	Pos = H->TheTokens[Hash(Str->Data, H)];
 	while (Pos != NULL && Pos->String != Str) {
 		Pos = Pos->Next;
 	}

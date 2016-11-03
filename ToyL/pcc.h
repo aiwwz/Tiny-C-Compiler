@@ -9,8 +9,9 @@
 /********************** lex.c **********************/
 #define IsLetter(ch) ('a'<= ch && ch <='z' || 'A'<= ch && ch <= 'Z')
 #define IsDigit(ch) ('0'<= ch && ch <='9')
-#define IsUnderline(ch) (ch == '_')
 #define Is_Layout(ch) (ch != EOF && ch <= ' ')
+#define IsUnderline(ch) (ch == '_')
+#define IsDot(ch) (ch == '.')
 typedef struct TokenWord *PtrToToken;
 typedef PtrToToken Position;
 typedef PtrToToken Token;
@@ -69,7 +70,7 @@ enum TkCode {
 
 	/*常量*/
 	C_INT,		//整型常量		
-	C_DOU,		//浮点型常量
+	C_DOUBLE,	//浮点型常量
 	C_CHAR,		//字符型常量
 	C_STR,		//字符串常量
 	
