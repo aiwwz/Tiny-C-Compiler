@@ -88,7 +88,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -150,14 +150,9 @@
     <ClCompile Include="dynamic.c" />
     <ClCompile Include="lex.c" />
     <ClCompile Include="pcc.c" />
-    <ClCompile Include="_ToyL.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pcc.h" />
-    <ClInclude Include="_expr_val.h" />
-    <ClInclude Include="_Memory.h" />
-    <ClInclude Include="_stack.h" />
-    <ClInclude Include="_token.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

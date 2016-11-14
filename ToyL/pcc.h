@@ -1,10 +1,13 @@
 #ifndef PCC_H
 #include <stdio.h>
-#define FatalError(Str) fprintf(stderr,"%s\n", Str), exit(1)
+#define FatalError(Str) printf("%s\n", Str), exit(-1)
 #define Error(Str) FatalError(Str)
 #define TKSIZE 1024
 #define STRSIZE 20
 #define HASHSIZE 1000
+
+/********************** pcc.c **********************/
+extern FILE *FP;
 
 /********************** lex.c **********************/
 #define IsLetter(ch) ('a'<= ch && ch <='z' || 'A'<= ch && ch <= 'Z')
@@ -20,8 +23,21 @@ typedef PtrToToken Token;
 struct TokenWord {
 	int TkCode;		//单词编码
 	char *String;	//单词字符串
-	Position Next;		//哈希冲突的下一个Token
+	Token Next;		//哈希冲突的下一个Token
 };
+
+extern Token token;
+void NextChar();
+void NextAvailChar();
+void RecognizeNote();
+void NextAvailChar();
+void InitLex();
+void RecognizeIden();
+void RecognizeNum();
+void RecognizeConst();
+void RecognizeNote();
+void Next_token();
+
 
 enum TkCode {
 	/*关键字*/
@@ -34,39 +50,34 @@ enum TkCode {
 	IF,			//关键字 if
 	INT,		//关键字 int
 	RETURN,		//关键字 return
-	SIZEOF,		//关键字 sizeof
-	STRUCT,		//关键字 struct
 	VOID,		//关键字 void
 	
 	/*运算符*/
 	PLUS,		//加法运算符 '+'
 	MINUS,		//减法运算符 '-'
-	STAR,		//乘法运算符 '*' 或 指针运算符 '*'
+	MULTI,		//乘法运算符 '*'
 	DIVIDE,		//除法运算符 '/'
 	MOD,		//取模运算符 '%'
-	ASS,		//赋值运算符 '='
+	ASSIGN,		//赋值运算符 '='
 	EQ,			//相等运算符 '=='
 	NEQ,		//不相等运算符 '!='
 	LT,			//小于运算符 '<'
 	GT,			//大于运算符 '>'
 	LE,			//小于等于运算符 '<='
 	GE,			//大于等于运算符 '>='
-	ARROW,		//箭头运算符 '->'
-	DOT,		//点号运算符 '.'
-	ADDRS,		//取地址运算符 '&'
 	OR,			//或运算符 '||'
 	AND,		//与运算符 '&&'
-	NOT,		//非运算符 '!'
 
 	/*分隔符*/
-	OPEN_PA,	//小括号 '('
-	CLOSE_PA,	//小括号 ')'
-	OPEN_BR,	//中括号 '['
-	CLOSE_BR,	//中括号 ']'
-	BEGIN,		//大括号 '{'
-	END,		//大括号 '}'
+	L_PAREN,	//小括号 '('
+	R_PAREN,	//小括号 ')'
+	L_BRACK,	//中括号 '['
+	R_BRACK,	//中括号 ']'
+	L_BRACE,		//大括号 '{'
+	R_BRACE,		//大括号 '}'
 	COMMA,		//逗号 ','
 	SEMI,		//分号 ';'
+	_EOF,		//文件结束符
 
 	/*常量*/
 	C_INT,		//整型常量		
@@ -102,8 +113,7 @@ struct HashTbl {
 };
 int Hash(char *Key, HashTable H);
 HashTable InitHash(int TableSize);
-Position Find(String Str, HashTable H);
-void Insert(Token Tk, HashTable H);
+Position Find(char *Str, HashTable H);
 
 /*动态数组结构定义*/
 #define MinVectorSize 1000
