@@ -89,7 +89,9 @@ void StringRealloc(String Str) {
 	if (P == NULL) {
 		FatalError("Out of space!");
 	}
+	Str->Data = P;
 	Str->Capacity *= 2;
+	printf("+++++%d+++++\n", Str->Size);
 }
 /*向字符串添加字符*/
 void StringAdd(String Str, char c) {
@@ -109,7 +111,7 @@ void StringReset(String Str) {
 
 /*哈希函数定义*/
 int Hash(char *Key, HashTable H) {
-	int HashVal = 0;
+	unsigned int HashVal = 0;
 	while (*Key != '\0') {
 		HashVal = (HashVal << 5) + *Key++;
 	}

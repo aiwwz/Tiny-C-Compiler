@@ -13,6 +13,5 @@ int main(int argc, char *argv[]) {
 		Next_token();
 	}
 	printf("Parse success!\n");
-
 	return 0;
 }

@@ -1,5 +1,9 @@
+/*aaaaaaaaa*/
 int main(){
-    int a = 0;
-    a = a + 1;
-    printf( "%d", a);
+    int a[10], i;
+    for(i = 1; i <=10; i = i + 1){
+	a[i] = i;
+	print( "###%d###", a);
+    }
+    return 0;
 }

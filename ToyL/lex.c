@@ -78,11 +78,11 @@ void InitLex() {
 		{ R_BRACE,	"}",		NULL },
 		{ COMMA,	",",		NULL },
 		{ SEMI,		";",		NULL },
-		{ _EOF,		"EOF",		NULL },
 		{ C_INT,	"int",		NULL },
 		{ C_DOUBLE,	"double",	NULL },
 		{ C_CHAR,	"char",		NULL },
 		{ C_STR,	"string",	NULL },
+		{ EOF,		"EOF",		NULL },
 		{ 0,		0,			0 }
 	};
 	int i;
@@ -112,14 +112,11 @@ void RecognizeIden() {
 		StringAdd(Str, ch);
 		NextChar();
 	}
-	printf("%c\n", ch);
 	if (ungetc(ch, FP) == EOF) { /*回写*/
 		Error("Write back error!");
 	}
-	printf("%s\n", Str->Data);
 	token = VectorAdd(Token_Table, Hash_Table, Str);
 	token->TkCode = IDENT;
-	printf("%s\n", token->String);
 }
 
 /* 解析数字常量--整数，实数 */
@@ -160,11 +157,7 @@ void RecognizeConst(){
 		}
 		else {
 			StringAdd(Str, ch);
-			NextChar();
 		}
-	}
-	if (ungetc(ch, FP) == EOF) { /*回写*/
-		Error("Write back error!");
 	}
 	if (c == '\'') {
 		token = VectorAdd(Token_Table, Hash_Table, Str);
@@ -184,6 +177,7 @@ void RecognizeNote() {
 		if (ch == '*') {
 			NextChar();
 			if (ch == '/') {
+				NextChar();
 				break;
 			}
 		}
@@ -315,7 +309,8 @@ void Next_token(){
 		token = Find("EOF", Hash_Table);
 		break;
 	default:
-		Error("无法识别的字符！");
+		printf("%c  ", ch);
+		Error("无法识别的字符!");
 		break;
 	}
 	printf("%s\n", token->String);
