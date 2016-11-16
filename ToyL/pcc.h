@@ -48,7 +48,7 @@ enum TkCode {
 	INT,		//关键字 int
 	RETURN,		//关键字 return
 	VOID,		//关键字 void
-	
+
 	/*运算符*/
 	PLUS,		//加法运算符 '+'
 	MINUS,		//减法运算符 '-'
@@ -81,6 +81,9 @@ enum TkCode {
 	C_CHAR,		//字符型常量
 	C_STR,		//字符串常量
 	
+	/*文件结束符*/
+	_EOF,
+
 	/*标识符*/
 	IDENT		//标识符
 };
@@ -130,7 +133,29 @@ Vector Token_Table;
 
 /******************** parser.c ********************/
 
-
-
+void Skip(int TkCode);
+int IsType(int TkCode);
+void Parser();
+void Declaration();
+void TypeState();
+void Declarator();
+void DeclarationSuffix();
+void FormalParaList();
+void FuncBody();
+void Statement();
+void ComplexStatement();
+void ConditionStatement();
+void LoopStatement();
+void ReturnStatement();
+void Expression();
+void AssignExpr();
+void LogicOrExpr();
+void LogicAndExpr();
+void EqualExpr();
+void RelationExpr();
+void AddMinusExpr();
+void MultiDivideExpr();
+void BaseExpr();
+void ElementExpr();
 
 #endif //PCC_H

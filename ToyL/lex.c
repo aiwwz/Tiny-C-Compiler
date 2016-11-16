@@ -54,7 +54,7 @@ void InitLex() {
 		{ FOR,		"for",		NULL },
 		{ IF,		"if",		NULL },
 		{ INT,		"int",		NULL },
-		{ RETURN,	"reutrn",	NULL },
+		{ RETURN,	"return",	NULL },
 		{ VOID,		"void",		NULL },
 		{ PLUS,		"+",		NULL },
 		{ MINUS,	"-",		NULL },
@@ -78,11 +78,11 @@ void InitLex() {
 		{ R_BRACE,	"}",		NULL },
 		{ COMMA,	",",		NULL },
 		{ SEMI,		";",		NULL },
-		{ C_INT,	"int",		NULL },
-		{ C_DOUBLE,	"double",	NULL },
-		{ C_CHAR,	"char",		NULL },
-		{ C_STR,	"string",	NULL },
-		{ EOF,		"EOF",		NULL },
+		{ C_INT,	"c_int",		NULL },
+		{ C_DOUBLE,	"c_double",	NULL },
+		{ C_CHAR,	"c_char",		NULL },
+		{ C_STR,	"c_string",	NULL },
+		{ _EOF,		"EOF",		NULL },
 		{ 0,		0,			0 }
 	};
 	int i;
@@ -116,7 +116,6 @@ void RecognizeIden() {
 		Error("Write back error!");
 	}
 	token = VectorAdd(Token_Table, Hash_Table, Str);
-	token->TkCode = IDENT;
 }
 
 /* 解析数字常量--整数，实数 */
@@ -313,5 +312,5 @@ void NextToken(){
 		Error("无法识别的字符!");
 		break;
 	}
-	printf("%s\n", token->String);
+	printf("%s--%d\n", token->String, token->TkCode);
 }

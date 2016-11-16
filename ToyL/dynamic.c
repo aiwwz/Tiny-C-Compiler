@@ -46,6 +46,7 @@ Token VectorAdd(Vector Vec, HashTable H, String Str) {
 		}
 		strcpy(Tk->String, Str->Data);
 		Tk->Next = H->TheTokens[Hash(Str->Data, H)];
+		Tk->TkCode = Vec->Size;
 		H->TheTokens[Hash(Str->Data, H)] = Tk;
 		Vec->Data[Vec->Size++] = Tk;
 	}

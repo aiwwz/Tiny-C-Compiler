@@ -25,9 +25,9 @@ int IsType(int TkCode) {
 }
 
 /*
-<分析单元> -> {<全局声明>}<文件结束符>
+<语法分析> -> {<全局声明>}<文件结束符>
 */
-void Parser_Unit() {
+void Parser() {
 	NextToken();
 	while (token->TkCode != EOF) {
 		Declaration();
@@ -35,8 +35,8 @@ void Parser_Unit() {
 }
 
 /*
-<声明> -> <类型声明><声明符>( | <函数体>
-								  | ["="<赋值表达式>]{","<声明符>["="<赋值表达式>]}";" )
+<声明> -> <类型声明><声明符>( <函数体>
+							 | ["="<赋值表达式>]{","<声明符>["="<赋值表达式>]}";" )
 
 <类型声明> -> "void" | "char" | "int" | "double"
 <声明符> -> "标识符"<声明符后缀>
@@ -52,19 +52,23 @@ void Declaration() {
 	while (TRUE) {
 		if (token->TkCode == L_BRACE) {
 			FuncBody();
+			break;
 		}
 		else {
 			if (token->TkCode == ASSIGN) {
+				NextToken();
 				AssignExpr();
 			}
 			else if (token->TkCode == COMMA) {
+				NextToken();
 				Declarator();
 			}
 			else {
 				Skip(SEMI);
-				return;
+				break;
 			}
 		}
+
 	}
 }
 
@@ -89,7 +93,7 @@ void TypeState(){
 <声明符> -> "标识符"<声明符后缀>
 */
 void Declarator() {
-	if (token->TkCode <= IDENT) {
+	if (token->TkCode < IDENT) {
 		Error("C_error: Absence identifier!");
 	}
 	else {
@@ -142,6 +146,7 @@ void FormalParaList() {
 */
 void FuncBody() {
 	ComplexStatement();
+	Skip(R_BRACE);
 }
 
 /*
@@ -180,7 +185,6 @@ void ComplexStatement(){
 	while (token->TkCode != R_BRACE) {
 		Statement();
 	}
-	NextToken();
 }
 
 /*
@@ -220,6 +224,7 @@ void ReturnStatement() {
 	NextToken();
 	if (token->TkCode != SEMI) {
 		Expression();
+		Skip(SEMI);
 	}
 	else {
 		Skip(SEMI);
@@ -351,7 +356,7 @@ void MultiDivideExpr() {
 
 /*
 <基本表达式> -> <元表达式>{"["<表达式>"]"
-						  |"("[<实参列表>]")"}
+						  |"("[<表达式>]")"}
 */
 void BaseExpr() {
 	ElementExpr();
@@ -363,14 +368,15 @@ void BaseExpr() {
 		else if (token->TkCode == L_PAREN) {
 			NextToken();
 			if (token->TkCode != R_PAREN) {
-				RealParaList();
+				Expression();
+				Skip(R_PAREN);
 			}
 			else{
 				Skip(R_PAREN);
 			}
 		}
 		else {
-			break;
+			break; 
 		}
 	}
 }

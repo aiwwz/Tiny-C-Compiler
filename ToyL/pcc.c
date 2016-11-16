@@ -9,10 +9,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	InitLex();
+	/*
 	NextToken();
-	while (token->TkCode != EOF) {
+	while (token->TkCode != _EOF) {
 		NextToken();
 	}
+	*/
+	Parser();
 	printf("Parse success!\n");
 	return 0;
 }
