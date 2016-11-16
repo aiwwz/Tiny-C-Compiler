@@ -84,14 +84,11 @@ String InitString(int StringSize) {
 }
 /*重置字符串容量*/
 void StringRealloc(String Str) {
-	char *P;
-	P = realloc(Str->Data, Str->Capacity * 2);
-	if (P == NULL) {
+	Str->Data = realloc(Str->Data, Str->Capacity * 2);
+	if (Str->Data == NULL) {
 		FatalError("Out of space!");
 	}
-	Str->Data = P;
 	Str->Capacity *= 2;
-	printf("+++++%d+++++\n", Str->Size);
 }
 /*向字符串添加字符*/
 void StringAdd(String Str, char c) {

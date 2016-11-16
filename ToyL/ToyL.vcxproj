@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="dynamic.c" />
     <ClCompile Include="lex.c" />
+    <ClCompile Include="parser.c" />
     <ClCompile Include="pcc.c" />
   </ItemGroup>
   <ItemGroup>

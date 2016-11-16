@@ -185,7 +185,7 @@ void RecognizeNote() {
 }
 
 /* ªÒ»°token */
-void Next_token(){
+void NextToken(){
 	NextAvailChar();
 	switch (ch)
 	{

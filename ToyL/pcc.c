@@ -7,10 +7,11 @@ int main(int argc, char *argv[]) {
 	if (!FP) {
 		Error("Open file fail!");
 	}
+
 	InitLex();
-	Next_token();
+	NextToken();
 	while (token->TkCode != EOF) {
-		Next_token();
+		NextToken();
 	}
 	printf("Parse success!\n");
 	return 0;

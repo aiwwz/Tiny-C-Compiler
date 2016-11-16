@@ -2,12 +2,11 @@
 #include <stdio.h>
 #define FatalError(Str) printf("%s\n", Str), exit(-1)
 #define Error(Str) FatalError(Str)
+#define TRUE 1
+#define FALSE 0
 #define TKSIZE 1024
 #define STRSIZE 20
 #define HASHSIZE 1000
-
-/********************** pcc.c **********************/
-extern FILE *FP;
 
 /********************** lex.c **********************/
 #define IsLetter(ch) ('a'<= ch && ch <='z' || 'A'<= ch && ch <= 'Z')
@@ -25,8 +24,6 @@ struct TokenWord {
 	char *String;	//单词字符串
 	Token Next;		//哈希冲突的下一个Token
 };
-
-extern Token token;
 void NextChar();
 void NextAvailChar();
 void RecognizeNote();
@@ -36,7 +33,7 @@ void RecognizeIden();
 void RecognizeNum();
 void RecognizeConst();
 void RecognizeNote();
-void Next_token();
+void NextToken();
 
 
 enum TkCode {
@@ -77,7 +74,6 @@ enum TkCode {
 	R_BRACE,		//大括号 '}'
 	COMMA,		//逗号 ','
 	SEMI,		//分号 ';'
-	_EOF,		//文件结束符
 
 	/*常量*/
 	C_INT,		//整型常量		
@@ -126,6 +122,15 @@ struct DynamicVector {
 Vector InitVector(int VectorSize);
 Token VectorAdd(Vector Vec, HashTable H, String Str);
 void VectorFree(Vector Vec);
+
+/******************全局变量******************/
+extern FILE *FP;
+extern Token token;
+Vector Token_Table;
+
+/******************** parser.c ********************/
+
+
 
 
 #endif //PCC_H
