@@ -40,14 +40,18 @@ enum TkCode {
 	/*关键字*/
 	BREAK,		//关键字 break
 	CHAR,		//关键字 char
+	CASE,		//关键字 case
 	CONTINUE,	//关键字 continue
+	DEFAULT,	//关键字 default
 	DOUBLE,		//关键字 double
 	ELSE,		//关键字 else
 	FOR,		//关键字 for
 	IF,			//关键字 if
 	INT,		//关键字 int
 	RETURN,		//关键字 return
+	SWITCH,		//关键字 switch
 	VOID,		//关键字 void
+	WHILE,		//关键字 while
 
 	/*运算符*/
 	PLUS,		//加法运算符 '+'
@@ -73,6 +77,7 @@ enum TkCode {
 	L_BRACE,		//大括号 '{'
 	R_BRACE,		//大括号 '}'
 	COMMA,		//逗号 ','
+	COLON,		//冒号 ':'
 	SEMI,		//分号 ';'
 
 	/*常量*/
@@ -144,9 +149,16 @@ void FormalParaList();
 void FuncBody();
 void Statement();
 void ComplexStatement();
-void ConditionStatement();
-void LoopStatement();
+void IfStatement();
+void SwitchStatement();
+void ForStatement();
+void WhileStatement();
+void CaseStatement();
+void DefaultStatement();
+void BreakStatement();
 void ReturnStatement();
+void ExprStatement();
+void IntConstExpr();
 void Expression();
 void AssignExpr();
 void LogicOrExpr();

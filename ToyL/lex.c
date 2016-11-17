@@ -1,6 +1,7 @@
 #include "pcc.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /******** 定义全局变量 ********/
 Vector Token_Table;		//单词表
@@ -28,7 +29,7 @@ void NextAvailChar() {
 			}
 			else { //回写
 				if (ungetc(ch, FP) == EOF) {
-					Error("Write back error!");
+					Error("C_error:回写失败!");
 				}
 				ch = '/';
 				break;
@@ -48,7 +49,9 @@ void InitLex() {
 	struct TokenWord TkWords[] = {
 		{ BREAK,	"break",	NULL },
 		{ CHAR,		"char",		NULL },
+		{ CASE,		"case",		NULL },
 		{ CONTINUE,	"continue", NULL },
+		{ DEFAULT,	"default",	NULL },
 		{ DOUBLE,	"double",	NULL },
 		{ ELSE,		"else",		NULL },
 		{ FOR,		"for",		NULL },
@@ -56,6 +59,8 @@ void InitLex() {
 		{ INT,		"int",		NULL },
 		{ RETURN,	"return",	NULL },
 		{ VOID,		"void",		NULL },
+		{ SWITCH,	"switch",	NULL },
+		{ WHILE,    "while",	NULL },
 		{ PLUS,		"+",		NULL },
 		{ MINUS,	"-",		NULL },
 		{ MULTI,	"*",		NULL },
@@ -77,10 +82,11 @@ void InitLex() {
 		{ L_BRACE,	"{",		NULL },
 		{ R_BRACE,	"}",		NULL },
 		{ COMMA,	",",		NULL },
+		{ COLON,	":",		NULL },
 		{ SEMI,		";",		NULL },
-		{ C_INT,	"c_int",		NULL },
+		{ C_INT,	"c_int",	NULL },
 		{ C_DOUBLE,	"c_double",	NULL },
-		{ C_CHAR,	"c_char",		NULL },
+		{ C_CHAR,	"c_char",	NULL },
 		{ C_STR,	"c_string",	NULL },
 		{ _EOF,		"EOF",		NULL },
 		{ 0,		0,			0 }
@@ -113,7 +119,7 @@ void RecognizeIden() {
 		NextChar();
 	}
 	if (ungetc(ch, FP) == EOF) { /*回写*/
-		Error("Write back error!");
+		Error("C_error:回写失败!");
 	}
 	token = VectorAdd(Token_Table, Hash_Table, Str);
 }
@@ -130,7 +136,7 @@ void RecognizeNum() {
 		NextChar();
 	}
 	if (ungetc(ch, FP) == EOF) { /*回写*/
-		Error("Write back error!");
+		Error("C_error:回写失败!");
 	}
 	if (cnt == 0) { //整型常量
 		token = VectorAdd(Token_Table, Hash_Table, Str);
@@ -141,7 +147,7 @@ void RecognizeNum() {
 		token->TkCode = C_DOUBLE;
 	}
 	else {
-		Error("词法错误！");
+		Error("C_error:词法错误!");
 	}
 }
 
@@ -277,7 +283,7 @@ void NextToken(){
 			token = Find("&&", Hash_Table);
 		}
 		else {
-			Error("词法错误！");
+			Error("C_error:词法错误!");
 		}
 		break;
 	case '(':
@@ -301,6 +307,9 @@ void NextToken(){
 	case ',':
 		token = Find(",", Hash_Table);
 		break;
+	case ':':
+		token = Find(":", Hash_Table);
+		break;
 	case ';':
 		token = Find(";", Hash_Table);
 		break;
@@ -309,8 +318,8 @@ void NextToken(){
 		break;
 	default:
 		printf("%c  ", ch);
-		Error("无法识别的字符!");
+		Error("C_error:无法识别的字符!");
 		break;
 	}
-	printf("%s--%d\n", token->String, token->TkCode);
+	printf("%s\n", token->String);
 }

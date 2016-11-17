@@ -7,7 +7,8 @@ void Skip(int TkCode) {
 		return;
 	}
 	else {
-		printf("Absence %s\n", Token_Table->Data[TkCode]);
+		printf("C_error:%s\n", Token_Table->Data[TkCode]->String);
+		exit(-1);
 	}
 }
 
@@ -29,7 +30,7 @@ int IsType(int TkCode) {
 */
 void Parser() {
 	NextToken();
-	while (token->TkCode != EOF) {
+	while (token->TkCode != _EOF) {
 		Declaration();
 	} 
 }
@@ -84,7 +85,7 @@ void TypeState(){
 		NextToken();
 		break;
 	default:
-		Error("C_error: Absence type statement!");
+		Error("C_error:缺少类型说明符!");
 		break;
 	}
 }
@@ -94,7 +95,7 @@ void TypeState(){
 */
 void Declarator() {
 	if (token->TkCode < IDENT) {
-		Error("C_error: Absence identifier!");
+		Error("C_error:缺少标识符!");
 	}
 	else {
 		NextToken();
@@ -146,14 +147,19 @@ void FormalParaList() {
 */
 void FuncBody() {
 	ComplexStatement();
-	Skip(R_BRACE);
 }
 
 /*
 <语句> -> <复合语句>
-		 |<条件语句>
-		 |<循环语句>
+		 |<if条件语句>
+		 |<switch条件语句>
+		 |<for循环语句>
+		 |<while循环语句>
+		 |<case语句>
+		 |<default语句>
+		 |<break语句>
 		 |<return语句>
+		 |<表达式语句>
 */
 void Statement() {
 	switch (token->TkCode) {
@@ -161,15 +167,31 @@ void Statement() {
 		ComplexStatement();
 		break;
 	case IF:
-		ConditionStatement();
+		IfStatement();
+		break;
+	case SWITCH:
+		SwitchStatement();
 		break;
 	case FOR:
-		LoopStatement();
+		ForStatement();
+		break;
+	case WHILE:
+		WhileStatement();
+		break;
+	case CASE:
+		CaseStatement();
+		break;
+	case DEFAULT:
+		DefaultStatement();
+		break;
+	case BREAK:
+		BreakStatement();
 		break;
 	case  RETURN:
 		ReturnStatement();
 		break;
 	default:
+		ExprStatement();
 		break;
 	}
 }
@@ -185,12 +207,13 @@ void ComplexStatement(){
 	while (token->TkCode != R_BRACE) {
 		Statement();
 	}
+	Skip(R_BRACE);
 }
 
 /*
-<条件语句> -> "if""("<表达式>")"<语句>["else"<语句>]
+<if条件语句> -> "if""("<表达式>")"<语句>["else"<语句>]
 */
-void ConditionStatement() {
+void IfStatement() {
 	NextToken();
 	Skip(L_PAREN);
 	Expression();
@@ -203,18 +226,76 @@ void ConditionStatement() {
 }
 
 /*
-<循环语句> -> "for""("<表达式>";"<表达式>";"<表达式>")"<语句>
+<switch条件语句> -> "switch""("<表达式>")"<语句>
 */
-void LoopStatement() {
+void SwitchStatement() {
 	NextToken();
 	Skip(L_PAREN);
 	Expression();
+	Skip(R_PAREN);
+	Statement();
+}
+
+/*
+<for循环语句> -> "for""("[<声明>|<表达式>]";"[<表达式>]";"[<表达式>]")"<语句>
+*/
+void ForStatement() {
+	NextToken();
+	Skip(L_PAREN);
+	if (token->TkCode != SEMI) {
+		if (IsType(token->TkCode)) {
+			Declaration();
+		}
+		else {
+			Expression();
+		}
+	}
+	Skip(SEMI); 
+	if (token->TkCode != SEMI) {
+		Expression();
+	}
 	Skip(SEMI);
-	Expression();
-	Skip(SEMI);
+	if (token->TkCode != R_PAREN) {
+		Expression();
+	}
+	Skip(R_PAREN);
+	Statement();
+}
+
+/*
+<while循环语句> -> "while""("<表达式>")"<语句> 
+*/
+void WhileStatement() {
+	NextToken();
+	Skip(L_PAREN);
 	Expression();
 	Skip(R_PAREN);
 	Statement();
+}
+
+/*
+<case语句> -> "case"<整型常量表达式>":"
+*/
+void CaseStatement() {
+	NextToken();
+	IntConstExpr();
+	Skip(COLON);
+}
+
+/*
+<default语句> -> "default"":"
+*/
+void DefaultStatement() {
+	NextToken();
+	Skip(COLON);
+}
+
+/*
+<break语句> -> "break"";"
+*/
+void BreakStatement() {
+	NextToken();
+	Skip(SEMI);
 }
 
 /*
@@ -228,6 +309,27 @@ void ReturnStatement() {
 	}
 	else {
 		Skip(SEMI);
+	}
+}
+
+/*
+<表达式语句> -> <表达式>";"
+*/
+void ExprStatement() {
+	Expression();
+	Skip(SEMI);
+}
+
+/*
+<整型常量表达式> -> "整型常量" | "字符常量"
+*/
+void IntConstExpr() {
+	if (token->TkCode == C_INT || token->TkCode == C_CHAR) {
+		NextToken();
+		return;
+	}
+	else {
+		Error("C_error:缺少整型常量表达式!");
 	}
 }
 
@@ -339,12 +441,12 @@ void AddMinusExpr() {
 }
 
 /*
-<乘除表达式> -> <基本表达式>{("*"|"/")<基本表达式>}
+<乘除表达式> -> <基本表达式>{("*"|"/"|"%")<基本表达式>}
 */
 void MultiDivideExpr() {
 	BaseExpr();
 	while (TRUE) {
-		if (token->TkCode == MULTI || token->TkCode == DIVIDE) {
+		if (token->TkCode == MULTI || token->TkCode == DIVIDE || token->TkCode == MOD) {
 			NextToken();
 			BaseExpr();
 		}
@@ -362,6 +464,7 @@ void BaseExpr() {
 	ElementExpr();
 	while (TRUE) {
 		if (token->TkCode == L_BRACK) {
+			NextToken();
 			Expression();
 			Skip(R_BRACK);
 		}
@@ -387,7 +490,6 @@ void BaseExpr() {
 */
 void ElementExpr() {
 	switch (token->TkCode) {
-	case IDENT:
 	case C_INT:
 	case C_DOUBLE:
 	case C_CHAR:
@@ -400,6 +502,12 @@ void ElementExpr() {
 		Skip(R_PAREN);
 		break;
 	default:
-		Error("缺少标识符或常量!");
+		if (token->TkCode >= IDENT) {
+			NextToken();
+			break;
+		}
+		else {
+			Error("C_error:缺少标识符或常量!");
+		}
 	}
 }

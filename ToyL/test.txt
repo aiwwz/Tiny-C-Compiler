@@ -1,7 +1,0 @@
-int a = 1;
-int f(){
-}
-int main(){
-    int a[10], i;
-    return 0;
-}

@@ -3,7 +3,7 @@
 FILE *FP;
 
 int main(int argc, char *argv[]) {
-	FP = fopen("test.txt", "r");
+	FP = fopen(argv[1], "r");
 	if (!FP) {
 		Error("Open file fail!");
 	}
@@ -16,6 +16,6 @@ int main(int argc, char *argv[]) {
 	}
 	*/
 	Parser();
-	printf("Parse success!\n");
+	printf("语法分析成功!\n");
 	return 0;
 }
