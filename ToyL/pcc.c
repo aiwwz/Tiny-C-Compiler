@@ -1,6 +1,8 @@
 #include <stdio.h>
+
 #include "pcc.h"
 FILE *FP;
+int a = 0, b = 1;
 
 int main(int argc, char *argv[]) {
 	FP = fopen(argv[1], "r");

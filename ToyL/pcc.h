@@ -1,4 +1,5 @@
 #ifndef PCC_H
+#define PCC_H
 #include <stdio.h>
 #define FatalError(Str) printf("%s\n", Str), exit(-1)
 #define Error(Str) FatalError(Str)
@@ -29,6 +30,7 @@ void NextAvailChar();
 void RecognizeNote();
 void NextAvailChar();
 void InitLex();
+void RecognizeInclude();
 void RecognizeIden();
 void RecognizeNum();
 void RecognizeConst();
@@ -47,8 +49,10 @@ enum TkCode {
 	ELSE,		//关键字 else
 	FOR,		//关键字 for
 	IF,			//关键字 if
+	INCLUDE,	//关键字 #include
 	INT,		//关键字 int
 	RETURN,		//关键字 return
+	STRING,		//关键字 string
 	SWITCH,		//关键字 switch
 	VOID,		//关键字 void
 	WHILE,		//关键字 while
@@ -85,12 +89,15 @@ enum TkCode {
 	C_DOUBLE,	//浮点型常量
 	C_CHAR,		//字符型常量
 	C_STR,		//字符串常量
+	C_HEADER,	//头文件常量
 	
 	/*文件结束符*/
 	_EOF,
 
 	/*标识符*/
-	IDENT		//标识符
+	IDENT,		//标识符
+	FUNC		//函数名
+	
 };
 
 
@@ -105,7 +112,7 @@ struct DynamicString {
 	char *Data;
 };
 String InitString(int StringSize);
-void StringAdd(String Str, char c);
+void StringAdd(char c);
 void StringReset(String Str);
 
 /*哈希表结构定义*/
@@ -117,7 +124,7 @@ struct HashTbl {
 };
 int Hash(char *Key, HashTable H);
 HashTable InitHash(int TableSize);
-Position Find(char *Str, HashTable H);
+Position Find(char *Str);
 
 /*动态数组结构定义*/
 #define MinVectorSize 1000
@@ -128,13 +135,15 @@ struct DynamicVector {
 	Token *Data;
 };
 Vector InitVector(int VectorSize);
-Token VectorAdd(Vector Vec, HashTable H, String Str);
+Token VectorAdd(String Str);
 void VectorFree(Vector Vec);
 
 /******************全局变量******************/
 extern FILE *FP;
 extern Token token;
-Vector Token_Table;
+extern Vector Token_Table;
+extern HashTable Hash_Table;
+extern String Str;
 
 /******************** parser.c ********************/
 
@@ -142,6 +151,7 @@ void Skip(int TkCode);
 int IsType(int TkCode);
 void Parser();
 void Declaration();
+void IncludeHeader();
 void TypeState();
 void Declarator();
 void DeclarationSuffix();
@@ -149,6 +159,7 @@ void FormalParaList();
 void FuncBody();
 void Statement();
 void ComplexStatement();
+void FuncCall();
 void IfStatement();
 void SwitchStatement();
 void ForStatement();

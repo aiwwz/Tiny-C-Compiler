@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="dynamic.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pcc.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="lex.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pcc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{cb38888b-f240-4909-8f72-86a6aeb3d55f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{38accc88-2ac5-4b12-ac68-1f8c885f52f9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

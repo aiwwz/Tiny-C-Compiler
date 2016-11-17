@@ -7,7 +7,7 @@ void Skip(int TkCode) {
 		return;
 	}
 	else {
-		printf("C_error:%s\n", Token_Table->Data[TkCode]->String);
+		printf("C_error:缺少%s\n", Token_Table->Data[TkCode]->String);
 		exit(-1);
 	}
 }
@@ -15,10 +15,11 @@ void Skip(int TkCode) {
 /*判断是否类型说说明符*/
 int IsType(int TkCode) {
 	switch (TkCode) {
+	case CHAR:
+	case STRING:
+	case VOID:
 	case INT:
 	case DOUBLE:
-	case CHAR:
-	case VOID:
 		return TRUE;
 	default:
 		return FALSE;
@@ -36,41 +37,40 @@ void Parser() {
 }
 
 /*
-<声明> -> <类型声明><声明符>( <函数体>
+<声明> -> <头文件包含>
+		 | <类型声明><声明符>( <函数体>
 							 | ["="<赋值表达式>]{","<声明符>["="<赋值表达式>]}";" )
-
-<类型声明> -> "void" | "char" | "int" | "double"
-<声明符> -> "标识符"<声明符后缀>
-<声明符后缀> -> { "(" ")"
-				| "(" <形参列表> ")"
-				| "[" "]" 
-				| "[" "整型常量" "]" }
-<函数体> -> <复合语句>
 */
 void Declaration() {
-	TypeState();
-	Declarator();
-	while (TRUE) {
+	if (token->TkCode == INCLUDE) {
+		IncludeHeader();
+	}
+	else if (IsType(token->TkCode)) {
+		TypeState();
+		Declarator();
 		if (token->TkCode == L_BRACE) {
 			FuncBody();
-			break;
 		}
 		else {
-			if (token->TkCode == ASSIGN) {
-				NextToken();
-				AssignExpr();
-			}
-			else if (token->TkCode == COMMA) {
-				NextToken();
-				Declarator();
-			}
-			else {
+				if (token->TkCode == ASSIGN) {
+					NextToken();
+					AssignExpr();
+				}
+				while (token->TkCode == COMMA) {
+					NextToken();
+					Declarator();
+				}
 				Skip(SEMI);
-				break;
-			}
 		}
-
 	}
+}
+
+/*
+<头文件包含> -> "#include" "头文件常量"
+*/
+void IncludeHeader() {
+	NextToken();
+	Skip(C_HEADER);
 }
 
 /*
@@ -79,6 +79,7 @@ void Declaration() {
 void TypeState(){
 	switch (token->TkCode) {
 	case CHAR:
+	case STRING:
 	case VOID:
 	case INT:
 	case DOUBLE:
@@ -94,11 +95,13 @@ void TypeState(){
 <声明符> -> "标识符"<声明符后缀>
 */
 void Declarator() {
+	Token tokenTmp = token;
 	if (token->TkCode < IDENT) {
 		Error("C_error:缺少标识符!");
 	}
-	else {
-		NextToken();
+	NextToken();
+	if (token->TkCode == L_PAREN) {
+		tokenTmp->TkCode = FUNC;
 	}
 	DeclarationSuffix();
 }
@@ -132,7 +135,6 @@ void FormalParaList() {
 	while (token->TkCode != R_PAREN) {
 		TypeState();
 		Declarator();
-		NextToken();
 		if (token->TkCode == R_PAREN) {
 			break;
 		}
@@ -151,6 +153,7 @@ void FuncBody() {
 
 /*
 <语句> -> <复合语句>
+		 |<函数调用语句>
 		 |<if条件语句>
 		 |<switch条件语句>
 		 |<for循环语句>
@@ -165,6 +168,9 @@ void Statement() {
 	switch (token->TkCode) {
 	case L_BRACE:
 		ComplexStatement();
+		break;
+	case FUNC:
+		FuncCall();
 		break;
 	case IF:
 		IfStatement();
@@ -208,6 +214,19 @@ void ComplexStatement(){
 		Statement();
 	}
 	Skip(R_BRACE);
+}
+
+/*
+<函数调用语句> -> "函数名""("[<表达式>]")"
+*/
+void FuncCall() {
+	NextToken();
+	Skip(L_PAREN);
+	if (token->TkCode != R_PAREN) {
+		Expression();
+	}
+	Skip(R_PAREN);
+	Skip(SEMI);
 }
 
 /*
@@ -337,15 +356,11 @@ void IntConstExpr() {
 <表达式> -> <赋值表达式>{","<赋值表达式>}
 */
 void Expression() {
-	while (TRUE) {
 		AssignExpr();
-		if (token->TkCode == COMMA) {
+		while (token->TkCode == COMMA) {
+			NextToken();
 			AssignExpr();
 		}
-		else {
-			break;
-		}
-	}
 }
 
 /*
@@ -364,14 +379,9 @@ void AssignExpr() {
 */
 void LogicOrExpr() {
 	LogicAndExpr();
-	while (TRUE) {
-		if (token->TkCode == OR) {
-			NextToken();
-			LogicAndExpr();
-		}
-		else {
-			break;
-		}
+	while (token->TkCode == OR) {
+		NextToken();
+		LogicAndExpr();
 	}
 }
 
@@ -380,14 +390,9 @@ void LogicOrExpr() {
 */
 void LogicAndExpr() {
 	EqualExpr();
-	while (TRUE) {
-		if (token->TkCode == AND) {
-			NextToken();
-			EqualExpr();
-		}
-		else {
-			break;
-		}
+	while (token->TkCode == AND) {
+		NextToken();
+		EqualExpr();
 	}
 }
 
@@ -396,14 +401,9 @@ void LogicAndExpr() {
 */
 void EqualExpr() {
 	RelationExpr();
-	while (TRUE) {
-		if (token->TkCode == EQ || token->TkCode == NEQ) {
-			NextToken();
-			RelationExpr();
-		}
-		else {
-			break;
-		}
+	while (token->TkCode == EQ || token->TkCode == NEQ) {
+		NextToken();
+		RelationExpr();
 	}
 }
 
@@ -412,15 +412,9 @@ void EqualExpr() {
 */
 void RelationExpr() {
 	AddMinusExpr();
-	while (TRUE) {
-		if (token->TkCode == LT || token->TkCode == GT
-			|| token->TkCode == LE || token->TkCode == GE) {
-			NextToken();
-			AddMinusExpr();
-		}
-		else {
-			break;
-		}
+	while (token->TkCode == LT || token->TkCode == GT || token->TkCode == LE || token->TkCode == GE) {
+		NextToken();
+		AddMinusExpr();
 	}
 }
 
@@ -429,14 +423,9 @@ void RelationExpr() {
 */
 void AddMinusExpr() {
 	MultiDivideExpr();
-	while (TRUE) {
-		if (token->TkCode == PLUS || token->TkCode == MINUS) {
-			NextToken();
-			MultiDivideExpr();
-		}
-		else {
-			break;
-		}
+	while (token->TkCode == PLUS || token->TkCode == MINUS) {
+		NextToken();
+		MultiDivideExpr();
 	}
 }
 
@@ -445,14 +434,9 @@ void AddMinusExpr() {
 */
 void MultiDivideExpr() {
 	BaseExpr();
-	while (TRUE) {
-		if (token->TkCode == MULTI || token->TkCode == DIVIDE || token->TkCode == MOD) {
-			NextToken();
-			BaseExpr();
-		}
-		else {
-			break;
-		}
+	while (token->TkCode == MULTI || token->TkCode == DIVIDE || token->TkCode == MOD) {
+		NextToken();
+		BaseExpr();
 	}
 }
 

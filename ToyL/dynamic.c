@@ -32,9 +32,9 @@ void VectorRealloc(Vector Vec) {
 	Vec->Capacity *= 2;
 }
 /*动态数组添加元素*/
-Token VectorAdd(Vector Vec, HashTable H, String Str) {
+Token VectorAdd(String Str) {
 	Token Tk;
-	Tk = Find(Str->Data, H);
+	Tk = Find(Str->Data);
 	if (!Tk) {
 		Tk = malloc(sizeof(struct TokenWord));
 		if (Tk == NULL) {
@@ -45,10 +45,10 @@ Token VectorAdd(Vector Vec, HashTable H, String Str) {
 			FatalError("Out of space!");
 		}
 		strcpy(Tk->String, Str->Data);
-		Tk->Next = H->TheTokens[Hash(Str->Data, H)];
-		Tk->TkCode = Vec->Size;
-		H->TheTokens[Hash(Str->Data, H)] = Tk;
-		Vec->Data[Vec->Size++] = Tk;
+		Tk->Next = Hash_Table->TheTokens[Hash(Str->Data, Hash_Table)];
+		Tk->TkCode = Token_Table->Size;
+		Hash_Table->TheTokens[Hash(Str->Data, Hash_Table)] = Tk;
+		Token_Table->Data[Token_Table->Size++] = Tk;
 	}
 	return Tk;
 }
@@ -92,7 +92,7 @@ void StringRealloc(String Str) {
 	Str->Capacity *= 2;
 }
 /*向字符串添加字符*/
-void StringAdd(String Str, char c) {
+void StringAdd(char c) {
 	if (Str->Size + 1 > Str->Capacity) {
 		StringRealloc(Str);
 	}
@@ -138,9 +138,9 @@ HashTable InitHash(int TableSize) {
 	return H;
 }
 /*哈希表查找*/
-Position Find(char *Str, HashTable H) {
+Position Find(char *Str) {
 	Position Pos;
-	Pos = H->TheTokens[Hash(Str, H)];
+	Pos = Hash_Table->TheTokens[Hash(Str, Hash_Table)];
 	while (Pos != NULL && strcmp(Pos->String, Str)) {
 		Pos = Pos->Next;
 	}

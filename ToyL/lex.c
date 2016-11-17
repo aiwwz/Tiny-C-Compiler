@@ -56,9 +56,11 @@ void InitLex() {
 		{ ELSE,		"else",		NULL },
 		{ FOR,		"for",		NULL },
 		{ IF,		"if",		NULL },
+		{ INCLUDE,	"#include",	NULL },
 		{ INT,		"int",		NULL },
 		{ RETURN,	"return",	NULL },
 		{ VOID,		"void",		NULL },
+		{ STRING,	"string",	NULL },
 		{ SWITCH,	"switch",	NULL },
 		{ WHILE,    "while",	NULL },
 		{ PLUS,		"+",		NULL },
@@ -88,6 +90,7 @@ void InitLex() {
 		{ C_DOUBLE,	"c_double",	NULL },
 		{ C_CHAR,	"c_char",	NULL },
 		{ C_STR,	"c_string",	NULL },
+		{ C_HEADER,	"c_header",	NULL },
 		{ _EOF,		"EOF",		NULL },
 		{ 0,		0,			0 }
 	};
@@ -110,18 +113,30 @@ void InitLex() {
 	}
 }
 
-
-/* 解析标识符 */
-void RecognizeIden() {
+/* 解析#include */
+void RecognizeInclude() {
 	StringReset(Str);
-	while (IsLetter(ch) || IsDigit(ch) || IsUnderline(ch)) {
-		StringAdd(Str, ch);
+	while (ch == '#' || IsLetter(ch)) {
+		StringAdd(ch);
 		NextChar();
 	}
 	if (ungetc(ch, FP) == EOF) { /*回写*/
 		Error("C_error:回写失败!");
 	}
-	token = VectorAdd(Token_Table, Hash_Table, Str);
+	token = VectorAdd(Str);
+}
+
+/* 解析标识符 */
+void RecognizeIden() {
+	StringReset(Str);
+	while (IsLetter(ch) || IsDigit(ch) || IsUnderline(ch)) {
+		StringAdd(ch);
+		NextChar();
+	}
+	if (ungetc(ch, FP) == EOF) { /*回写*/
+		Error("C_error:回写失败!");
+	}
+	token = VectorAdd(Str);
 }
 
 /* 解析数字常量--整数，实数 */
@@ -132,45 +147,48 @@ void RecognizeNum() {
 		if (IsDot(ch)) {
 			cnt++;
 		}
-		StringAdd(Str, ch);
+		StringAdd(ch);
 		NextChar();
 	}
 	if (ungetc(ch, FP) == EOF) { /*回写*/
 		Error("C_error:回写失败!");
 	}
 	if (cnt == 0) { //整型常量
-		token = VectorAdd(Token_Table, Hash_Table, Str);
-		token->TkCode = C_INT;
+		token = Find("c_int");
+		
 	}
 	else if (cnt == 1) { //浮点型常量
-		token = VectorAdd(Token_Table, Hash_Table, Str);
-		token->TkCode = C_DOUBLE;
+		token = Find("c_double");
 	}
 	else {
 		Error("C_error:词法错误!");
 	}
 }
 
-/* 解析常量--字符、字符串 */
+/* 解析常量--字符,字符串,头文件*/
 void RecognizeConst(){
 	StringReset(Str);
 	char c = ch;
-	while (1) {
+	if (ch == '<') {
+		 c = '>';
+	}
+	while (TRUE) {
 		NextChar();
 		if (ch == c) {
 			break;
 		}
 		else {
-			StringAdd(Str, ch);
+			StringAdd(ch);
 		}
 	}
 	if (c == '\'') {
-		token = VectorAdd(Token_Table, Hash_Table, Str);
-		token->TkCode = C_CHAR;
+		token = Find("c_char"); /*字符*/
+	}
+	else if(c == '\"'){
+		token = Find("c_string"); /*字符串*/
 	}
 	else {
-		token = VectorAdd(Token_Table, Hash_Table, Str);
-		token->TkCode = C_STR;
+		token = Find("c_header"); /*头文件*/
 	}
 }
 
@@ -212,41 +230,44 @@ void NextToken(){
 	case '8': case '9':
 		RecognizeNum(); /*数字常量*/
 		break;
+	case '#':
+		RecognizeInclude(); /*#include*/
+		break;
 	case '\'':
 	case '\"':
 		RecognizeConst(); /*字符，字符串常量*/
 		break;
 	case '+':
-		token = Find("+", Hash_Table);
+		token = Find("+");
 		break;
 	case '-':
-		token = Find("-", Hash_Table);
+		token = Find("-");
 		break;
 	case '*':
-		token = Find("*", Hash_Table);
+		token = Find("*");
 		break;
 	case '/':
-		token = Find("/", Hash_Table);
+		token = Find("/");
 		break;
 	case '%':
-		token = Find("%", Hash_Table);
+		token = Find("%");
 		break;
 	case '=':
 		NextChar();
-		if (ch == '='){
-			token = Find("==", Hash_Table);
+		if (ch == '=') {
+			token = Find("==");
 		}
 		else {
 			if (ungetc(ch, FP) == EOF) { /*回写*/
 				Error("Write back error!");
 			}
-			token = Find("=", Hash_Table);
+			token = Find("=");
 		}
 		break;
 	case '!':
 		NextChar();
-		if (ch == '='){
-			token = Find("!=", Hash_Table);
+		if (ch == '=') {
+			token = Find("!=");
 		}
 		else {
 			if (ungetc(ch, FP) == EOF) { /*回写*/
@@ -255,66 +276,72 @@ void NextToken(){
 		}
 		break;
 	case '<':
-		NextChar();
-		if (ch == '='){
-			token = Find("<=", Hash_Table);
+		if (token->TkCode != INCLUDE){
+			NextChar();
+			if (ch == '=') {
+				token = Find("<=");
+			}
+			else {
+				if (ungetc(ch, FP) == EOF) { /*回写*/
+					Error("Write back error!");
+				}
+				token = Find("<");
+			}
+			break;
 		}
 		else {
-			if (ungetc(ch, FP) == EOF) { /*回写*/
-				Error("Write back error!");
-			}
-			token = Find("<", Hash_Table);
+			RecognizeConst();
+			break;
 		}
-		break;
 	case '>':
 		if (ch == '='){
-			token = Find(">=", Hash_Table);
+			token = Find(">=");
 		}
 		else {
 			if (ungetc(ch, FP) == EOF) { /*回写*/
 				Error("Write back error!");
 			}
-			token = Find(">", Hash_Table);
+			token = Find(">");
 		}
 		break;
 	case '&':
 		NextChar();
 		if (ch == '&') {
-			token = Find("&&", Hash_Table);
+			token = Find("&&");
 		}
 		else {
 			Error("C_error:词法错误!");
 		}
 		break;
 	case '(':
-		token = Find("(", Hash_Table);
+		token = Find("(");
 		break;
 	case '[':
-		token = Find("[", Hash_Table);
+		token = Find("[");
 		break;
 	case '{':
-		token = Find("{", Hash_Table);
+		token = Find("{");
 		break;
 	case ')':
-		token = Find(")", Hash_Table);
+		token = Find(")");
 		break;
 	case ']':
-		token = Find("]", Hash_Table);
+		token = Find("]");
 		break;
 	case '}':
-		token = Find("}", Hash_Table);
+		token = Find("}");
 		break;
 	case ',':
-		token = Find(",", Hash_Table);
+		token = Find(",");
 		break;
 	case ':':
-		token = Find(":", Hash_Table);
+		token = Find(":");
 		break;
 	case ';':
-		token = Find(";", Hash_Table);
+		token = Find(";");
 		break;
 	case EOF:
-		token = Find("EOF", Hash_Table);
+		token = Find("EOF");
 		break;
 	default:
 		printf("%c  ", ch);
