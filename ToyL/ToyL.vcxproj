@@ -153,7 +153,7 @@
     <ClCompile Include="pcc.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pcc.h" />
+    <ClInclude Include="toyc.h" />
     <ClInclude Include="stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

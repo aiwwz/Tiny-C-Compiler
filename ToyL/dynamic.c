@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "pcc.h"
+#include "toyc.h"
 
 /*************** 动态数组相关函数 ***************/
 

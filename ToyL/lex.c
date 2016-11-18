@@ -1,4 +1,4 @@
-#include "pcc.h"
+#include "toyc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -92,6 +92,7 @@ void InitLex() {
 		{ C_STR,	"c_string",	NULL },
 		{ C_HEADER,	"c_header",	NULL },
 		{ _EOF,		"EOF",		NULL },
+		{ FUNC,		"func",		NULL },
 		{ 0,		0,			0 }
 	};
 	int i;
@@ -294,6 +295,7 @@ void NextToken(){
 			break;
 		}
 	case '>':
+		NextChar();
 		if (ch == '='){
 			token = Find(">=");
 		}
@@ -348,5 +350,6 @@ void NextToken(){
 		Error("C_error:无法识别的字符!");
 		break;
 	}
-	printf("%s\n", token->String);
+
+	printf("%s   ", token->String);
 }

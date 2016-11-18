@@ -1,5 +1,5 @@
-#ifndef PCC_H
-#define PCC_H
+#ifndef TOYC_H
+#define TOYC_H
 #include <stdio.h>
 #define FatalError(Str) printf("%s\n", Str), exit(-1)
 #define Error(Str) FatalError(Str)
@@ -94,9 +94,11 @@ enum TkCode {
 	/*文件结束符*/
 	_EOF,
 
+	/*函数名*/
+	FUNC,		//函数名
+
 	/*标识符*/
-	IDENT,		//标识符
-	FUNC		//函数名
+	IDENT		//标识符
 	
 };
 
@@ -169,7 +171,6 @@ void DefaultStatement();
 void BreakStatement();
 void ReturnStatement();
 void ExprStatement();
-void IntConstExpr();
 void Expression();
 void AssignExpr();
 void LogicOrExpr();
@@ -181,4 +182,4 @@ void MultiDivideExpr();
 void BaseExpr();
 void ElementExpr();
 
-#endif //PCC_H
+#endif //TOYC_H

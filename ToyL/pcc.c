@@ -18,6 +18,6 @@ int main(int argc, char *argv[]) {
 	}
 	*/
 	Parser();
-	printf("语法分析成功!\n");
+	printf("\n语法分析成功!\n");
 	return 0;
 }

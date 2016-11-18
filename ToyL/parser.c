@@ -1,4 +1,4 @@
-#include "pcc.h";
+#include "toyc.h";
 
 /*跳过当前单词*/
 void Skip(int TkCode) {
@@ -27,7 +27,7 @@ int IsType(int TkCode) {
 }
 
 /*
-<语法分析> -> {<全局声明>}<文件结束符>
+<语法分析> -> {<声明>}<文件结束符>
 */
 void Parser() {
 	NextToken();
@@ -47,7 +47,7 @@ void Declaration() {
 	}
 	else if (IsType(token->TkCode)) {
 		TypeState();
-		Declarator();
+		Declarator(); 
 		if (token->TkCode == L_BRACE) {
 			FuncBody();
 		}
@@ -59,6 +59,10 @@ void Declaration() {
 				while (token->TkCode == COMMA) {
 					NextToken();
 					Declarator();
+					if (token->TkCode == ASSIGN) {
+						NextToken();
+						AssignExpr();
+					}
 				}
 				Skip(SEMI);
 		}
@@ -256,20 +260,18 @@ void SwitchStatement() {
 }
 
 /*
-<for循环语句> -> "for""("[<声明>|<表达式>]";"[<表达式>]";"[<表达式>]")"<语句>
+<for循环语句> -> "for""("([<声明>]|[<表达式>";"])[<表达式>]";"[<表达式>]")"<语句>
 */
 void ForStatement() {
 	NextToken();
 	Skip(L_PAREN);
-	if (token->TkCode != SEMI) {
-		if (IsType(token->TkCode)) {
-			Declaration();
-		}
-		else {
-			Expression();
-		}
+	if (IsType(token->TkCode)) {
+		Declaration();
 	}
-	Skip(SEMI); 
+	else {
+		Expression();
+		Skip(SEMI);
+	}
 	if (token->TkCode != SEMI) {
 		Expression();
 	}
@@ -293,11 +295,16 @@ void WhileStatement() {
 }
 
 /*
-<case语句> -> "case"<整型常量表达式>":"
+<case语句> -> "case"("整型常量"|"字符型常量")":"
 */
 void CaseStatement() {
 	NextToken();
-	IntConstExpr();
+	if (token->TkCode == C_INT || token->TkCode == C_CHAR) {
+		NextToken();
+	}
+	else {
+		Error("C_error:缺少整型常量表达式!");
+	}
 	Skip(COLON);
 }
 
@@ -337,19 +344,6 @@ void ReturnStatement() {
 void ExprStatement() {
 	Expression();
 	Skip(SEMI);
-}
-
-/*
-<整型常量表达式> -> "整型常量" | "字符常量"
-*/
-void IntConstExpr() {
-	if (token->TkCode == C_INT || token->TkCode == C_CHAR) {
-		NextToken();
-		return;
-	}
-	else {
-		Error("C_error:缺少整型常量表达式!");
-	}
 }
 
 /*

@@ -15,10 +15,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pcc.h">
+    <ClInclude Include="stack.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="stack.h">
+    <ClInclude Include="toyc.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,21 +1,9 @@
-int a;
+#include <stdio.h>
 
-int add(int x, int y){
-}
-
-int main(){    
-    int a = 0;
-    int b;
-    switch(a){
-    case 1:
-	b = 1;
-	break;
-    case 2:
-	b = 2;
-	break;
-    default:
-	break;
-}
-
+int main(){
+	int a[10];
+	for (int i = 0; i < 10) {
+		a[i] = i;
+	}
     return 0;
 }
